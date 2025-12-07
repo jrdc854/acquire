@@ -15,6 +15,10 @@ mongoose.connect(MONGO_URI)
     .then(() => console.log('[MONGODB] Conexión a la base de datos establecida'))
     .catch(err => console.error('[MONGODB] Error de conexión:', err.message));
 
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'OK' });
+});
+
 // --- LEVANTAR SERVIDOR ---
 app.listen(PORT, () => {
     console.log(`[ACQUIRE] Servicio escuchando en el puerto ${PORT}`);

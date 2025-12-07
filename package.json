@@ -1,0 +1,20 @@
+{
+  "name": "acquire",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/jrdc854/acquire#readme",
+  "bugs": {
+    "url": "https://github.com/jrdc854/acquire/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jrdc854/acquire.git"
+  },
+  "license": "MIT",
+  "author": "jordi <pepe@gmail.com> (http://pepe.com/)",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

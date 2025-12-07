@@ -1,5 +1,4 @@
-import dotenv from "dotenv";
-dotenv.config();
+require("dotenv").config();
 
 const KUNNA_URL = process.env.KUNNA_URL;
 
@@ -48,3 +47,30 @@ async function fetchKunna(timeStart, timeEnd) {
 
   return result; // { columns, values }
 }
+
+// 2. NUEVA FUNCIÓN: acquireData
+// Tu server.js llama a "acquireData()" sin argumentos.
+// Aquí definimos el tiempo y formateamos la respuesta.
+async function acquireData() {
+  // Definimos un rango de tiempo por defecto (ej. última hora)
+  const timeEnd = new Date();
+  const timeStart = new Date(timeEnd.getTime() - 60 * 60 * 1000); // Restar 1 hora
+
+  // Llamamos a la lógica de Kunna
+  const rawResult = await fetchKunna(timeStart, timeEnd);
+
+  // 3. TRANSFORMACIÓN
+  // Tu server.js espera devolver { features, rawData }.
+  // Aquí debes extraer los datos numéricos que te interesen para 'features'.
+  // Por ahora, pongo un ejemplo genérico tomando la primera columna de valores.
+  
+  const features = rawResult.values.map(row => row[1]); // Ejemplo: Tomar el valor de la columna 1
+  //creo que tengo que coger la columna de los datos en la que este el consumo, lo miro en postman
+  return {
+    features: features, 
+    rawData: rawResult
+  };
+}
+
+// 4. CAMBIO: Exportar con module.exports (CommonJS)
+module.exports = { acquireData };

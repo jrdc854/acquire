@@ -39,32 +39,44 @@ async function fetchKunna(timeStart, timeEnd) {
   }
 
   const json = await response.json();
+  
+  // 1. PRIMERO DEFINIMOS LA VARIABLE (Esto debe ir antes de usarla)
   const result = json.result;
+
+  // 2. LUEGO HACEMOS LOS LOGS (Ahora sí podemos usar 'result')
+  // ========================================================
+  if (result && result.columns) {
+      console.log("\n🔍 --- INSPECCIÓN DE DATOS KUNNA ---");
+      console.log("👀 NOMBRES DE COLUMNAS:", result.columns);
+      console.log("📊 EJEMPLO DE PRIMERA FILA:", result.values[0]);
+      console.log("--------------------------------------\n");
+  }
+  // ========================================================
 
   if (!result || !Array.isArray(result.columns) || !Array.isArray(result.values)) {
     throw new Error("KUNNA_INVALID_RESULT");
   }
 
-  return result; // { columns, values }
+  return result; 
 }
 
 // 2. NUEVA FUNCIÓN: acquireData
 // Tu server.js llama a "acquireData()" sin argumentos.
 // Aquí definimos el tiempo y formateamos la respuesta.
 async function acquireData() {
-  // Definimos un rango de tiempo por defecto (ej. última hora)
   const timeEnd = new Date();
-  const timeStart = new Date(timeEnd.getTime() - 60 * 60 * 1000); // Restar 1 hora
+  // CAMBIO: Pedir 7 días atrás en lugar de 1 hora
+  const timeStart = new Date(timeEnd.getTime() - 7 * 24 * 60 * 60 * 1000); 
 
-  // Llamamos a la lógica de Kunna
   const rawResult = await fetchKunna(timeStart, timeEnd);
+  // ... resto igual ...
 
   // 3. TRANSFORMACIÓN
   // Tu server.js espera devolver { features, rawData }.
   // Aquí debes extraer los datos numéricos que te interesen para 'features'.
   // Por ahora, pongo un ejemplo genérico tomando la primera columna de valores.
   
-  const features = rawResult.values.map(row => row[1]); // Ejemplo: Tomar el valor de la columna 1
+  const features = rawResult.values.map(row => row[2]); // Ejemplo: Tomar el valor de la columna 1
   //creo que tengo que coger la columna de los datos en la que este el consumo, lo miro en postman
   return {
     features: features, 

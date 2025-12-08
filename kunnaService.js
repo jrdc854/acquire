@@ -43,16 +43,6 @@ async function fetchKunna(timeStart, timeEnd) {
   // 1. PRIMERO DEFINIMOS LA VARIABLE (Esto debe ir antes de usarla)
   const result = json.result;
 
-  // 2. LUEGO HACEMOS LOS LOGS (Ahora sí podemos usar 'result')
-  // ========================================================
-  if (result && result.columns) {
-      console.log("\n🔍 --- INSPECCIÓN DE DATOS KUNNA ---");
-      console.log("👀 NOMBRES DE COLUMNAS:", result.columns);
-      console.log("📊 EJEMPLO DE PRIMERA FILA:", result.values[0]);
-      console.log("--------------------------------------\n");
-  }
-  // ========================================================
-
   if (!result || !Array.isArray(result.columns) || !Array.isArray(result.values)) {
     throw new Error("KUNNA_INVALID_RESULT");
   }
@@ -74,9 +64,8 @@ async function acquireData() {
   // 3. TRANSFORMACIÓN
   // Tu server.js espera devolver { features, rawData }.
   // Aquí debes extraer los datos numéricos que te interesen para 'features'.
-  // Por ahora, pongo un ejemplo genérico tomando la primera columna de valores.
   
-  const features = rawResult.values.map(row => row[2]); // Ejemplo: Tomar el valor de la columna 1
+  const features = rawResult.values.map(row => row[2]); 
   //creo que tengo que coger la columna de los datos en la que este el consumo, lo miro en postman
   return {
     features: features, 

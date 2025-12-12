@@ -27,17 +27,19 @@ app.listen(PORT, () => {
 // Dentro de acquire/server.js, después de la conexión a DB
 
 app.post('/data', async (req, res) => {
+    
     try {
         console.log('[ACQUIRE] Iniciando adquisición de datos...');
         
         // 1. ADQUISICIÓN Y TRANSFORMACIÓN DE DATOS (llama a tu kunnaService)
         // kunnService.js debe devolver un objeto { features: [num1, num2, ...], rawData: {...} }
-        const data = await acquireData(); // Llama a la lógica Kunna
         
+        const { features, rawData, featureCount } = await acquireData();
+
         // 2. CREACIÓN DE DOCUMENTO CON EL MODELO DE MONGOOSE
         const newData = new DataModel({
-            features: data.features,
-            rawData: data.rawData,
+            features: features,
+            rawData: rawData,
             timestamp: new Date()
         });
         
@@ -47,9 +49,10 @@ app.post('/data', async (req, res) => {
 
         // 4. CUMPLIMIENTO DEL CONTRATO (Respuesta)
         // Devolvemos el vector de features y el ID del registro al orchestrator.
-        return res.status(200).json({
+        return res.status(201).json({ //created
             dataId: newData._id,
-            features: newData.features
+            features: newData.features,
+            featureCount: newData.features.length,
         });
 
     } catch (error) {

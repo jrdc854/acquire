@@ -55,22 +55,43 @@ async function fetchKunna(timeStart, timeEnd) {
 // Aquí definimos el tiempo y formateamos la respuesta.
 async function acquireData() {
   const timeEnd = new Date();
-  // CAMBIO: Pedir 7 días atrás en lugar de 1 hora
-  const timeStart = new Date(timeEnd.getTime() - 7 * 24 * 60 * 60 * 1000); 
 
+  const timeStart = new Date(timeEnd.getTime() - 7 * 24 * 60 * 60 * 1000);
   const rawResult = await fetchKunna(timeStart, timeEnd);
-  // ... resto igual ...
 
-  // 3. TRANSFORMACIÓN
-  // Tu server.js espera devolver { features, rawData }.
-  // Aquí debes extraer los datos numéricos que te interesen para 'features'.
-  
-  const features = rawResult.values.map(row => row[2]); 
-  //creo que tengo que coger la columna de los datos en la que este el consumo, lo miro en postman
+  const values = rawResult.values;
+
+  //1. validar que ehay suficientes datos (t-2, t-1, 1)
+  if (values.length < 3) {
+    throw new Error("KUNNA_INSUFFICIENT_DATA: Se requieren al menos 3 días de datos históricos.")
+  }
+
+  //odentificar el índice de la columna de consumo
+  const consumptionIndex = 2; //col en la que está el consumo
+
+  //extraer 7 features
+  const features = [
+    values[0][consumptionIndex], //consumo hoy (t)
+    values[1][consumptionIndex], //consumo ayer (t -1)
+    values[2][consumptionIndex], //consumo anteayer (t - 2)
+
+    //features de tiempo
+    new Date().getHours(), //hora del dia
+    new Date().getDay(),  //día de la semana
+    new Date().getMonth() + 1, //mes
+    new Date().getDate()   //dia del mes
+  ];
+
+  //forzar la validación
+  if (features.length !== 7) {
+    throw new Error("INTERNAL_FEATURE_ERROR: La extracción no produjo 7 elementos.");
+  }
   return {
-    features: features, 
-    rawData: rawResult
+    features: features,
+    rawData: rawResult,
+    featureCount: features.length //incluir el conteo
   };
+
 }
 
 // 4. CAMBIO: Exportar con module.exports (CommonJS)

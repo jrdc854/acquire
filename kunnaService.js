@@ -50,6 +50,7 @@ async function fetchKunna(timeStart, timeEnd) {
   return result; 
 }
 
+//esto sería como el controller
 // 2. NUEVA FUNCIÓN: acquireData
 // Tu server.js llama a "acquireData()" sin argumentos.
 // Aquí definimos el tiempo y formateamos la respuesta.

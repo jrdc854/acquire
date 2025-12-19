@@ -40,7 +40,6 @@ async function fetchKunna(timeStart, timeEnd) {
 
   const json = await response.json();
   
-  // 1. PRIMERO DEFINIMOS LA VARIABLE (Esto debe ir antes de usarla)
   const result = json.result;
 
   if (!result || !Array.isArray(result.columns) || !Array.isArray(result.values)) {
@@ -50,10 +49,6 @@ async function fetchKunna(timeStart, timeEnd) {
   return result; 
 }
 
-//esto sería como el controller
-// 2. NUEVA FUNCIÓN: acquireData
-// Tu server.js llama a "acquireData()" sin argumentos.
-// Aquí definimos el tiempo y formateamos la respuesta.
 async function acquireData() {
   const timeEnd = new Date();
 
@@ -62,38 +57,33 @@ async function acquireData() {
 
   const values = rawResult.values;
 
-  //1. validar que ehay suficientes datos (t-2, t-1, 1)
   if (values.length < 3) {
     throw new Error("KUNNA_INSUFFICIENT_DATA: Se requieren al menos 3 días de datos históricos.")
   }
 
-  //odentificar el índice de la columna de consumo
-  const consumptionIndex = 2; //col en la que está el consumo
+  const consumptionIndex = 2; 
 
-  //extraer 7 features
   const features = [
-    values[0][consumptionIndex], //consumo hoy (t)
-    values[1][consumptionIndex], //consumo ayer (t -1)
-    values[2][consumptionIndex], //consumo anteayer (t - 2)
+    values[0][consumptionIndex], //consumo  (t)
+    values[1][consumptionIndex], //consumo  (t -1)
+    values[2][consumptionIndex], //consumo  (t - 2)
 
     //features de tiempo
-    new Date().getHours(), //hora del dia
-    new Date().getDay(),  //día de la semana
-    new Date().getMonth() + 1, //mes
-    new Date().getDate()   //dia del mes
+    new Date().getHours(), 
+    new Date().getDay(),  
+    new Date().getMonth() + 1, 
+    new Date().getDate()   
   ];
 
-  //forzar la validación
   if (features.length !== 7) {
     throw new Error("INTERNAL_FEATURE_ERROR: La extracción no produjo 7 elementos.");
   }
   return {
     features: features,
     rawData: rawResult,
-    featureCount: features.length //incluir el conteo
+    featureCount: features.length 
   };
 
 }
 
-// 4. CAMBIO: Exportar con module.exports (CommonJS)
 module.exports = { acquireData };

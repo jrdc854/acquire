@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config(); 
-const { acquireData } = require('./kunnaService'); // El script que obtiene datos de Kunna
-const DataModel = require('./dataModel'); // El esquema de Mongoose
+const { acquireData } = require('./kunnaService'); 
+const DataModel = require('./dataModel');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
